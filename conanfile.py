@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
-import os
 
 
 class GlBindingConan(ConanFile):
@@ -14,6 +13,8 @@ class GlBindingConan(ConanFile):
     author = "fishbupt <fishbupt@gmail.com>"
     license = "MIT"
     settings = "os", "compiler", "build_type", "arch"
+    options = {"shared": [True, False]}
+    default_options = "shared=True"
     extracted_dir = "glbinding-" + version
     no_copy_source = True
     generators = "cmake"
@@ -30,12 +31,26 @@ conan_basic_setup()''')
 
     def build(self):
         cmake = CMake(self)
+        cmake.definitions["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
+        cmake.definitions["OPTION_BUILD_TEST"] = "OFF"
+        cmake.definitions["OPTION_BUILD_DOCS"] = "OFF"
+        cmake.definitions["OPTION_BUILD_TOOLS"] = "ON"
+        cmake.definitions["OPTION_BUILD_EXAMPLES"] = "OFF"
         cmake.configure(source_folder=self.extracted_dir)
         cmake.build()
         cmake.install()
 
     def package(self):
-        pass
+        # Copying static and dynamic libs
+        self.copy(pattern="*.a", dst="lib", src=".", keep_path=False)
+        self.copy(pattern="*.lib", dst="lib", src=".", keep_path=False)
+        self.copy(pattern="*.dll", dst="bin", src=".", keep_path=False)
+        self.copy(pattern="*.so*", dst="lib", src=".", keep_path=False)
+        self.copy(pattern="*.dylib*", dst="lib", src=".", keep_path=False)
+        
 
     def package_info(self):
-        self.cpp_info.libs = ["glbinding"]
+        if self.settings.build_type == 'Debug':
+            self.cpp_info.libs = ["glbindingd", "glbinding-auxd"]
+        else:
+            self.cpp_info.libs = ["glbinding", "glbinding-aux"]
