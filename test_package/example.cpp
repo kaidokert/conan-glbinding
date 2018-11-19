@@ -28,3 +28,4 @@ int main()
 		<< "OpenGL Render: " << aux::ContextInfo::renderer() << "\n";
 
 	return 0;
+}

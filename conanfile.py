@@ -18,7 +18,7 @@ class GlBindingConan(ConanFile):
     extracted_dir = "glbinding-" + version
     no_copy_source = True
     generators = "cmake"
-    requires = ("glfw/[^3.2.1]@fishbupt/latest")
+    requires = ("glfw/[^3.2.1]@bincrafters/stable")
 
     def source(self):
         source_url = "https://github.com/cginternals/glbinding"
