@@ -6,7 +6,7 @@ from conans import ConanFile, CMake, tools
 
 class GlBindingConan(ConanFile):
     name = "glbinding"
-    version = "3.0.2"
+    version = "3.1.0"
     description = "Cross platform C++ binding for the OpenGL API."
     url = ""
     homepage = "https://github.com/cginternals/glbinding"
@@ -29,7 +29,7 @@ class GlBindingConan(ConanFile):
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
-    def build(self):
+    def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
         cmake.definitions["OPTION_BUILD_TEST"] = "OFF"
@@ -37,17 +37,15 @@ conan_basic_setup()''')
         cmake.definitions["OPTION_BUILD_TOOLS"] = "ON"
         cmake.definitions["OPTION_BUILD_EXAMPLES"] = "OFF"
         cmake.configure(source_folder=self.extracted_dir)
+        return cmake
+
+    def build(self):
+        cmake = self.configure_cmake()
         cmake.build()
-        cmake.install()
 
     def package(self):
-        # Copying static and dynamic libs
-        self.copy(pattern="*.a", dst="lib", src=".", keep_path=False)
-        self.copy(pattern="*.lib", dst="lib", src=".", keep_path=False)
-        self.copy(pattern="*.dll", dst="bin", src=".", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", src=".", keep_path=False)
-        self.copy(pattern="*.dylib*", dst="lib", src=".", keep_path=False)
-        
+        cmake = self.configure_cmake()
+        cmake.install()
 
     def package_info(self):
         if self.settings.build_type == 'Debug':
