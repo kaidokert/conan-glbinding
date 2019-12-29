@@ -8,7 +8,7 @@ class GlBindingConan(ConanFile):
     name = "glbinding"
     version = "3.1.0"
     description = "Cross platform C++ binding for the OpenGL API."
-    url = ""
+    url = "https://www.glbinding.org"
     homepage = "https://github.com/cginternals/glbinding"
     author = "fishbupt <fishbupt@gmail.com>"
     license = "MIT"
