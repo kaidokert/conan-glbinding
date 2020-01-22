@@ -8,6 +8,7 @@ import os
 class GlbindingTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
+    requires = ("glfw/[^3.2.1]@bincrafters/stable")
 
     def build(self):
         cmake = CMake(self)
